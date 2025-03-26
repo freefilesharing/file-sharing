@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload & Share</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            color: #fff;
+            text-align: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        input[type="file"] {
+            padding: 10px;
+            background: #fff;
+            border-radius: 5px;
+            color: #333;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            border: none;
+            background: #ff7e5f;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #feb47b;
+        }
+        a {
+            color: #fff;
+            font-weight: bold;
+            word-break: break-all;
+        }
+        .contact {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            width: 80%;
+            text-align: center;
+        }
+    </style>
+    <script>
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput.files.length === 0) {
+                alert("Please select a file.");
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+            
+            try {
+                const response = await fetch("http://localhost:3000/upload", {
+                    method: "POST",
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.link) {
+                    document.getElementById('linkContainer').innerHTML = 
+                        `<p>Share this link: <a href="${result.link}" target="_blank">${result.link}</a></p>`;
+                } else {
+                    alert("Upload failed. Try again.");
+                }
+            } catch (error) {
+                console.error("Error uploading file:", error);
+                alert("An error occurred while uploading the file.");
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Upload a File</h2>
+        <input type="file" id="fileInput">
+        <button onclick="uploadFile()">Upload</button>
+        <div id="linkContainer"></div>
+    </div>
+    <div class="contact">
+        <p>Contact us: <a href="mailto:support@example.com">support@example.com</a></p>
+    </div>
+</body>
+</html>
